@@ -8,7 +8,7 @@ const PORT = process.env.PORT
 app.use(cors())
 app.use(logger('dev'));
  
-app.get('/ping', function (req, res, next) {
+app.get('/pong', function (req, res, next) {
   res.json({message: 'pong'})
 })
  
