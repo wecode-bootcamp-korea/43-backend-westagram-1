@@ -37,7 +37,7 @@ Icon
 .Trashes
 .VolumeIcon.icns
 .com.apple.timemachine.donotpresent
-
+schema.sql
 # Directories potentially created on remote AFP share
 .AppleDB
 .AppleDesktop

@@ -82,11 +82,11 @@ app.post("/posts", async (req, res) => {
 app.get("/users-posts", async (req, res) => {
   await appDataSource.manager.query(
     `SELECT
-        users.id,
-        users.profile_image,
-        posts.id,
-        posts.posts_img,
-        posts.content
+        users.id AS userID,
+        users.profile_image AS userProfileImage,
+        posts.id AS postingId,
+        posts.posts_img AS postingImageUrl,
+        posts.content AS postingContent
       FROM users
       RIGHT JOIN POSTS ON users.id = posts.user_id`,
     (err, rows) => {
