@@ -32,18 +32,14 @@ app.use(cors());
 app.use(morgan("dev"));
 
 const PORT = process.env.PORT;
+const HOST = process.env.HOST;
 
-//health check
 app.get("/ping", (req, res) => {
   return res.status(200).json({ message: "pong" });
 });
 
-//[users]
-//create users
 app.post("/users", async (req, res) => {
   const { name, email, profile_image, password } = req.body;
-
-  //console.log(req)
 
   await appDataSource.query(
     `INSERT INTO users(
@@ -58,12 +54,8 @@ app.post("/users", async (req, res) => {
   res.status(201).json({ message: "userCreated" });
 });
 
-//[posts]
-//create posts
 app.post("/posts", async (req, res) => {
   const { title, content, user_id, posts_img } = req.body;
-
-  //console.log(req)
 
   await appDataSource.query(
     `INSERT INTO posts(
@@ -78,7 +70,6 @@ app.post("/posts", async (req, res) => {
   res.status(201).json({ message: "postCreated" });
 });
 
-//get users-posts
 app.get("/users-posts", async (req, res) => {
   await appDataSource.manager.query(
     `SELECT
@@ -93,9 +84,9 @@ app.get("/users-posts", async (req, res) => {
       res.status(200).json(rows);
     }
   );
+  return res.status(201).json({ message: "useCreated" });
 });
 
-const HOST = process.env.HOST;
 const start = async () => {
   try {
     app.listen(PORT, HOST, () => console.log(`server is listening on ${PORT}`));
