@@ -70,23 +70,6 @@ app.post("/posts", async (req, res) => {
   res.status(201).json({ message: "postCreated" });
 });
 
-app.get("/users-posts", async (req, res) => {
-  await appDataSource.manager.query(
-    `SELECT
-        users.id AS userID,
-        users.profile_image AS userProfileImage,
-        posts.id AS postingId,
-        posts.posts_img AS postingImageUrl,
-        posts.content AS postingContent
-      FROM users
-      RIGHT JOIN POSTS ON users.id = posts.user_id`,
-    (err, rows) => {
-      res.status(200).json(rows);
-    }
-  );
-  return res.status(201).json({ message: "useCreated" });
-});
-
 const start = async () => {
   try {
     app.listen(PORT, HOST, () => console.log(`server is listening on ${PORT}`));
