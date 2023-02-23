@@ -34,7 +34,6 @@ app.get("/ping", (req, res) => {
   return res.status(200).json({ message: "pong" });
 });
 
-const server = http.createServer(app);
 const PORT = process.env.PORT;
 
 const HOST = process.env.HOST;
