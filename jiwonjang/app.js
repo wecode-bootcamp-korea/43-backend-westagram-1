@@ -61,7 +61,7 @@ app.post("/users", async (req, res) => {
 //[posts]
 //create posts
 app.post("/posts", async (req, res) => {
-  const { title, content, user_id } = req.body;
+  const { title, content, user_id, posts_img } = req.body;
 
   //console.log(req)
 
@@ -69,22 +69,26 @@ app.post("/posts", async (req, res) => {
     `INSERT INTO posts(
       title,
       content,
-      user_id
-    ) VALUES (?, ?, ?);
+      user_id,
+      posts_img
+    ) VALUES (?, ?, ?, ?);
     `,
-    [title, content, user_id]
+    [title, content, user_id, posts_img]
   );
   res.status(201).json({ message: "postCreated" });
 });
 
 //get users-posts
 app.get("/users-posts", async (req, res) => {
-  await appDataSoutce.manager.query(
+  await appDataSource.manager.query(
     `SELECT
         users.id,
         users.profile_image,
-        posts
-      FROM users `,
+        posts.id,
+        posts.posts_img,
+        posts.content
+      FROM users
+      RIGHT JOIN POSTS ON users.id = posts.user_id`,
     (err, rows) => {
       res.status(200).json(rows);
     }

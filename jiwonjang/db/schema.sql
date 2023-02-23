@@ -20,6 +20,7 @@ CREATE TABLE `posts` (
   `title` varchar(100) NOT NULL,
   `content` varchar(3000) DEFAULT NULL,
   `user_id` int NOT NULL,
+  `posts_img` varchar(1000) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -80,5 +81,6 @@ CREATE TABLE `users` (
 LOCK TABLES `schema_migrations` WRITE;
 INSERT INTO `schema_migrations` (version) VALUES
   ('20230222082324'),
-  ('20230223025343');
+  ('20230223025343'),
+  ('20230223061228');
 UNLOCK TABLES;
