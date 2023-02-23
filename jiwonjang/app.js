@@ -29,14 +29,29 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan("dev"));
 
-//health check
+const PORT = process.env.PORT;
+const HOST = process.env.HOST;
+
 app.get("/ping", (req, res) => {
   return res.status(200).json({ message: "pong" });
 });
 
-const PORT = process.env.PORT;
+app.post("/users", async (req, res) => {
+  const { name, email, profileImage, password } = req.body;
 
-const HOST = process.env.HOST;
+  await appDataSource.query(
+    `INSERT INTO users(
+      name,
+      email,
+      profile_image,
+      password
+    ) VALUES (?, ?, ?, ?);
+    `,
+    [name, email, profileImage, password]
+  );
+  return res.status(201).json({ message: "useCreated" });
+});
+
 const start = async () => {
   try {
     app.listen(PORT, HOST, () => console.log(`server is listening on ${PORT}`));
