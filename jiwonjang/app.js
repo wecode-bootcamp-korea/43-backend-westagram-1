@@ -38,6 +38,7 @@ app.get("/ping", (req, res) => {
   return res.status(200).json({ message: "pong" });
 });
 
+//[users]
 //create users
 app.post("/users", async (req, res) => {
   const { name, email, profile_image, password } = req.body;
@@ -57,6 +58,7 @@ app.post("/users", async (req, res) => {
   res.status(201).json({ message: "userCreated" });
 });
 
+//[posts]
 //create posts
 app.post("/posts", async (req, res) => {
   const { title, content, user_id } = req.body;
@@ -73,6 +75,20 @@ app.post("/posts", async (req, res) => {
     [title, content, user_id]
   );
   res.status(201).json({ message: "postCreated" });
+});
+
+//get users-posts
+app.get("/users-posts", async (req, res) => {
+  await appDataSoutce.manager.query(
+    `SELECT
+        users.id,
+        users.profile_image,
+        posts
+      FROM users `,
+    (err, rows) => {
+      res.status(200).json(rows);
+    }
+  );
 });
 
 const HOST = process.env.HOST;
