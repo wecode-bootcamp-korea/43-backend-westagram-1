@@ -1,14 +1,12 @@
-const dotenv = require("dotenv");
-dotenv.config();
+require("dotenv").config();
 
-const http = require("http");
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 
 const { DataSource } = require("typeorm");
 
-const myDataSource = new DataSource({
+const appDataSource = new DataSource({
   type: process.env.DB_CONNECTION,
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
@@ -17,14 +15,14 @@ const myDataSource = new DataSource({
   database: process.env.DB_DATABASE,
 });
 
-myDataSource
+appDataSource
   .initialize()
   .then(() => {
     console.log("Data Source has been initialized!");
   })
   .catch((err) => {
     console.error("Error during Data Source initialization", err);
-    myDataSource.destroy();
+    appDataSource.destroy();
   });
 
 app = express();
@@ -33,12 +31,10 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan("dev"));
 
-// health check
 app.get("/ping", (req, res) => {
   res.status(200).json({ message: "pong" });
 });
 
-const server = http.createServer(app);
 const PORT = process.env.PORT;
 
 const start = async () => {
