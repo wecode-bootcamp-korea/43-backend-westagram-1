@@ -30,6 +30,7 @@ app.use(cors());
 app.use(morgan("dev"));
 
 const PORT = process.env.PORT;
+const HOST = process.env.HOST;
 
 //health check
 app.get("/ping", (req, res) => {
@@ -56,7 +57,6 @@ app.post("/users", async (req, res) => {
   res.status(201).json({ message: "useCreated" });
 });
 
-const HOST = process.env.HOST;
 const start = async () => {
   try {
     app.listen(PORT, HOST, () => console.log(`server is listening on ${PORT}`));
