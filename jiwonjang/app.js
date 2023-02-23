@@ -1,6 +1,8 @@
 require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
+
 const morgan = require("morgan");
 
 const { DataSource } = require("typeorm");
@@ -37,9 +39,8 @@ app.get("/ping", (req, res) => {
 });
 
 //create users
-
 app.post("/users", async (req, res) => {
-  const { name, email, profileImage, password } = req.body;
+  const { name, email, profile_image, password } = req.body;
 
   //console.log(req)
 
@@ -51,9 +52,27 @@ app.post("/users", async (req, res) => {
       password
     ) VALUES (?, ?, ?, ?);
     `,
-    [name, email, profileImage, password]
+    [name, email, profile_image, password]
   );
-  res.status(201).json({ message: "useCreated" });
+  res.status(201).json({ message: "userCreated" });
+});
+
+//create posts
+app.post("/posts", async (req, res) => {
+  const { title, content, user_id } = req.body;
+
+  //console.log(req)
+
+  await appDataSource.query(
+    `INSERT INTO posts(
+      title,
+      content,
+      user_id
+    ) VALUES (?, ?, ?);
+    `,
+    [title, content, user_id]
+  );
+  res.status(201).json({ message: "postCreated" });
 });
 
 const HOST = process.env.HOST;
