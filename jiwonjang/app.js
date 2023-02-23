@@ -32,17 +32,12 @@ app.use(morgan("dev"));
 const PORT = process.env.PORT;
 const HOST = process.env.HOST;
 
-//health check
 app.get("/ping", (req, res) => {
   return res.status(200).json({ message: "pong" });
 });
 
-//create users
-
 app.post("/users", async (req, res) => {
   const { name, email, profileImage, password } = req.body;
-
-  //console.log(req)
 
   await appDataSource.query(
     `INSERT INTO users(
@@ -54,7 +49,7 @@ app.post("/users", async (req, res) => {
     `,
     [name, email, profileImage, password]
   );
-  res.status(201).json({ message: "useCreated" });
+  return res.status(201).json({ message: "useCreated" });
 });
 
 const start = async () => {
