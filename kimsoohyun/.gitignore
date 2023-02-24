@@ -3,6 +3,8 @@
 
 .env
 
+./db/schema.sql
+
 ### Linux ###
 *~
 
