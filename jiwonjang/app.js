@@ -38,7 +38,7 @@ app.get("/ping", (req, res) => {
   return res.status(200).json({ message: "pong" });
 });
 
-app.post("/users", async (req, res) => {
+app.post("/users/signup", async (req, res) => {
   const { name, email, profile_image, password } = req.body;
 
   await appDataSource.query(
@@ -68,6 +68,105 @@ app.post("/posts", async (req, res) => {
     [title, content, user_id, posts_img]
   );
   res.status(201).json({ message: "postCreated" });
+});
+
+app.patch("/posts", async (req, res) => {
+  const { posting_id, posting_title, posting_content } = req.body;
+
+  await appDataSource.query(
+    `UPDATE posts
+      SET
+      title = ?,
+      content = ?
+    WHERE id = ?
+    `,
+    [posting_title, posting_content, posting_id]
+  );
+  const result = await appDataSource.query(
+    `SELECT 
+        users.id as userId,
+        users.name as userName,
+        posts.id as postingId,
+        posts.title as postingTitle,
+        posts.content as postingContent
+      FROM posts
+      INNER JOIN users ON users.id = posts.user_id
+      WHERE posts.id = ?
+      GROUP BY users.id
+    `,
+    [posting_id]
+  );
+  return res.status(200).json({ data: result });
+});
+
+app.delete("/:postId/posts", async (req, res) => {
+  const { postId } = req.params;
+
+  await appDataSource.query(
+    `
+      DELETE
+      FROM posts
+      Where id = ?
+    `,
+    [postId]
+  );
+  res.status(200).json({ message: "postingDeleted" });
+});
+
+app.get("/users-posts", async (req, res) => {
+  await appDataSource.manager.query(
+    `SELECT
+        users.id AS userId,
+        users.profile_image AS userProfileImage,
+        posts.id AS postingId,
+        posts.posts_img AS postingImageUrl,
+        posts.content AS postingContent
+      FROM users
+      RIGHT JOIN posts ON users.id = posts.user_id`,
+    (err, rows) => {
+      res.status(200).json(rows);
+    }
+  );
+});
+
+app.get("/users/:userId/posts", async (req, res) => {
+  const { userId } = req.params;
+
+  const result = await appDataSource.query(
+    `SELECT
+        users.id AS userID,
+        users.profile_image AS userProfileImage,
+        JSON_ARRAYAGG(
+          JSON_OBJECT(
+            "postingId", posts.id,
+            "postingImageUrl", posts.posts_img,
+            "postingContent", posts.content
+          )
+        )AS postings
+      FROM users
+      JOIN posts ON users.id = posts.user_id
+      WHERE users.id = ?
+      GROUP BY users.id
+      `,
+    [userId]
+  );
+  return res.status(200).json({ data: result });
+});
+
+app.post("/:userId/:postId/likes", async (req, res) => {
+  const { userId, postId } = req.params;
+  try {
+    await appDataSource.query(
+      `INSERT INTO likes(
+        user_id ,
+        post_id 
+      ) VALUES(?, ?);`,
+      [userId, postId]
+    );
+    res.status(201).json({ message: "likeCreated" });
+  } catch (err) {
+    return res.status(500).json({ message: "You already liked" });
+  }
 });
 
 const start = async () => {
