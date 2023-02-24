@@ -1,20 +1,13 @@
+require("dotenv").config();
+
 const express = require('express')
-const logger = require('morgan');
 const cors = require('cors')
+const morgan = require('morgan');
 const app = express()
-const dotenv = require("dotenv")
 const { DataSource } = require('typeorm');
 
-dotenv.config()
 
-app.use(cors())
-app.use(logger('combined'));
-
-app.get('/ping', function (req, res, next) {
-    res.json({message: 'pong'})
-})
-
-const myDataSource = new DataSource({
+const appDataSource = new DataSource({
     type: process.env.TYPEORM_CONNECTION,
     host: process.env.TYPEORM_HOST,
     port: process.env.TYPEORM_PORT,
@@ -23,12 +16,28 @@ const myDataSource = new DataSource({
     database: process.env.TYPEORM_DATABASE
 })
 
-myDataSource.initialize()
+appDataSource.initialize()
     .then(() => {
         console.log("Data Source has been initialized!")
     })
+    .catch((err) => {
+        console.error("Error during Data Source initialization:", err)
+    })
 
-app.listen(8005, function () {
-    console.log('server listening on port 8005')
+app.use(cors())
+app.use(morgan('combined'));
+
+app.get('/ping', function (req, res, next) {
+    return res.status(200).json({message: 'pong'})
 })
+
+const PORT = process.env.PORT
+
+const startServer=()=>{
+    app.listen(PORT, function(){
+        console.log(`Server listening on PORT ${PORT}`)
+    })
+}
+
+startServer();
 
