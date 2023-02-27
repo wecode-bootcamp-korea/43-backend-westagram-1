@@ -29,14 +29,12 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan('dev'));
 
-// health check
 app.get("/ping", (req, res) => {
     res.status(200).json({ message : "pong"});
 })
 
 const PORT = process.env.PORT;
 
-// 회원가입
 app.post("/users", async (req, res)=> {
     const {id, name, email, profileImage, password}=req.body;
 
