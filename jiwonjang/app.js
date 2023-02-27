@@ -93,7 +93,7 @@ app.patch("/posts", async (req, res) => {
       INNER JOIN users ON users.id = posts.user_id
       WHERE posts.id = ?
     `,
-    [postingIåd]
+    [postingId]
   );
   return res.status(200).json({ data: result });
 });
