@@ -37,7 +37,7 @@ app.get("/ping", (req, res) => {
 const PORT = process.env.PORT;
 
 // 회원가입
-app.post("/users?", async (req, res)=> {
+app.post("/users", async (req, res)=> {
     const {id, name, email, profileImage, password}=req.body;
 
     await appDataSource.query(
