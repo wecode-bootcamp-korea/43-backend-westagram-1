@@ -1,14 +1,14 @@
 -- migrate:up
-create table users(
-  id int not null AUTO_INCREMENT primary key,
-  name varchar(50) not null,
-  email varchar(200) not null,
-  profile_image varchar(1000) null,
-  password varchar(200) not null,
-  created_at timestamp not null default current_timestamp,
-  updated_at timestamp null on update current_timestamp
+CREATE TABLE users(
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL,
+  email VARCHAR(200) NOT NULL UNIQUE,
+  profile_image VARCHAR(1000) NULL,
+  password VARCHAR(200) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP
 );
 
 
 -- migrate:down
-drop table users;
+DROP TABLE users;
