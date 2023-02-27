@@ -39,7 +39,7 @@ app.get("/ping", (req, res) => {
 });
 
 app.post("/users/signup", async (req, res) => {
-  const { name, email, profile_image, password } = req.body;
+  const { name, email, profileImage, password } = req.body;
 
   await appDataSource.query(
     `INSERT INTO users(
@@ -49,13 +49,13 @@ app.post("/users/signup", async (req, res) => {
       password
     ) VALUES (?, ?, ?, ?);
     `,
-    [name, email, profile_image, password]
+    [name, email, profileImage, password]
   );
   res.status(201).json({ message: "userCreated" });
 });
 
 app.post("/posts", async (req, res) => {
-  const { title, content, user_id, posts_img } = req.body;
+  const { title, content, userId, postsImg } = req.body;
 
   await appDataSource.query(
     `INSERT INTO posts(
@@ -65,13 +65,13 @@ app.post("/posts", async (req, res) => {
       posts_img
     ) VALUES (?, ?, ?, ?);
     `,
-    [title, content, user_id, posts_img]
+    [title, content, userId, postsImg]
   );
   res.status(201).json({ message: "postCreated" });
 });
 
 app.patch("/posts", async (req, res) => {
-  const { posting_id, posting_title, posting_content } = req.body;
+  const { postingId, postingTitle, postingContent } = req.body;
 
   await appDataSource.query(
     `UPDATE posts
@@ -80,7 +80,7 @@ app.patch("/posts", async (req, res) => {
       content = ?
     WHERE id = ?
     `,
-    [posting_title, posting_content, posting_id]
+    [postingTitle, postingContent, postingId]
   );
   const result = await appDataSource.query(
     `SELECT 
@@ -92,14 +92,13 @@ app.patch("/posts", async (req, res) => {
       FROM posts
       INNER JOIN users ON users.id = posts.user_id
       WHERE posts.id = ?
-      GROUP BY users.id
     `,
-    [posting_id]
+    [postingIåd]
   );
   return res.status(200).json({ data: result });
 });
 
-app.delete("/:postId/posts", async (req, res) => {
+app.delete("/posts/:postId", async (req, res) => {
   const { postId } = req.params;
 
   await appDataSource.query(
@@ -124,7 +123,7 @@ app.get("/users-posts", async (req, res) => {
       FROM users
       RIGHT JOIN posts ON users.id = posts.user_id`,
     (err, rows) => {
-      res.status(200).json(rows);
+      res.status(200).json({ data: rows });
     }
   );
 });
@@ -171,7 +170,9 @@ app.post("/:userId/:postId/likes", async (req, res) => {
 
 const start = async () => {
   try {
-    app.listen(PORT, HOST, () => console.log(`server is listening on ${PORT}`));
+    app.listen(PORT, HOST, () =>
+      console.log(`🧨server is listening on ${PORT}🧨`)
+    );
   } catch (err) {
     console.error(err);
   }
