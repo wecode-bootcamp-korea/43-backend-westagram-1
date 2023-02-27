@@ -36,6 +36,23 @@ app.get("/ping", (req, res) => {
 
 const PORT = process.env.PORT;
 
+// 회원가입
+app.post("/users?", async (req, res)=> {
+    const {id, name, email, profileImage, password}=req.body;
+
+    await appDataSource.query(
+        `INSERT INTO users(
+            id,
+            name,
+            email,
+            profile_image,
+            password
+        ) VALUES (?, ?, ?, ?, ?)`,
+        [id, name, email, profileImage, password]
+    );
+    res.status(201).json({message : "user created"});
+});
+
 const start = async () => {
     app.listen(PORT, () => console.log(`Server is listening on ${PORT}`));
 }
