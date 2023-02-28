@@ -33,11 +33,11 @@ app.use(morgan("dev"));
 
 const PORT = process.env.PORT;
 const HOST = process.env.HOST;
-
+//
 app.get("/ping", (req, res) => {
   return res.status(200).json({ message: "pong" });
 });
-
+//completed(no test)
 app.post("/users/signup", async (req, res) => {
   const { name, email, profileImage, password } = req.body;
 
@@ -53,7 +53,7 @@ app.post("/users/signup", async (req, res) => {
   );
   res.status(201).json({ message: "userCreated" });
 });
-
+//completed(no test)
 app.post("/posts", async (req, res) => {
   const { title, content, userId, postsImg } = req.body;
 
@@ -69,7 +69,7 @@ app.post("/posts", async (req, res) => {
   );
   res.status(201).json({ message: "postCreated" });
 });
-
+//completed(no test)
 app.patch("/posts", async (req, res) => {
   const { postingId, postingTitle, postingContent } = req.body;
 
@@ -97,7 +97,7 @@ app.patch("/posts", async (req, res) => {
   );
   return res.status(200).json({ data: result });
 });
-
+//completed(no test)
 app.delete("/posts/:postId", async (req, res) => {
   const { postId } = req.params;
 
@@ -111,7 +111,7 @@ app.delete("/posts/:postId", async (req, res) => {
   );
   res.status(200).json({ message: "postingDeleted" });
 });
-
+//
 app.get("/users-posts", async (req, res) => {
   await appDataSource.manager.query(
     `SELECT
@@ -127,7 +127,7 @@ app.get("/users-posts", async (req, res) => {
     }
   );
 });
-
+//
 app.get("/users/:userId/posts", async (req, res) => {
   const { userId } = req.params;
 
@@ -151,7 +151,7 @@ app.get("/users/:userId/posts", async (req, res) => {
   );
   return res.status(200).json({ data: result });
 });
-
+//
 app.post("/:userId/:postId/likes", async (req, res) => {
   const { userId, postId } = req.params;
   try {
