@@ -5,6 +5,8 @@ const cors = require('cors')
 const morgan = require('morgan');
 const {DataSource} = require('typeorm');
 
+const routes = require("./routes");
+
 const appDataSource = new DataSource({
     type: process.env.TYPEORM_CONNECTION,
     host: process.env.TYPEORM_HOST,
@@ -27,6 +29,11 @@ const app = express()
 app.use(express.json())
 app.use(cors())
 app.use(morgan('combined'));
+app.use(routes);
+
+app.get("/ping", (req, res) => {
+    res.json({message: "pong"});
+});
 
 app.get('/users', async (req, res) => {
     const users = await appDataSource.query(`
@@ -40,6 +47,7 @@ app.get('/users', async (req, res) => {
     return res.status(200).json({users})
 });
 app.get('/users/:userId/posts', async (req, res) => {
+
     const {userId} = req.params
     const result = await appDataSource.query(`
         SELECT users.id            as userId,
@@ -96,33 +104,31 @@ app.get('/likes', async (req, res) => {
 })
 
 app.post('/users', async (req, res) => {
-    const {id, name, email, profileImage, password} = req.body
-    const users = await appDataSource.query(
-        `INSERT INTO users(id,
-                           name,
+    const {name, email, profileImage, password} = req.body
+    await appDataSource.query(
+        `INSERT INTO users(name,
                            email,
                            profile_image,
                            password)
-         VALUES (?, ?, ?, ?, ?);
-        `, [id, name, email, profileImage, password]);
+         VALUES (?, ?, ?, ?);
+        `, [name, email, profileImage, password]);
     res.status(201).json({message: "user created"}
     );
 })
 app.post('/posts', async (req, res) => {
-    const {id, imageUrl, title, content, userId} = req.body;
-    const posts = await appDataSource.query(
-        `INSERT INTO posts(id,
-                           image_url,
+    const {imageUrl, title, content, userId} = req.body;
+    await appDataSource.query(
+        `INSERT INTO posts(image_url,
                            title,
                            content,
                            user_id)
-         VALUES (?, ?, ?, ?, ?);`, [id, imageUrl, title, content, userId]
+         VALUES (?, ?, ?, ?);`, [imageUrl, title, content, userId]
     );
     return res.status(201).json({message: "post created"})
 });
 app.post('/likes', async (req, res) => {
     const {userId, postId} = req.body
-    const likes = await appDataSource.query(
+    await appDataSource.query(
         `INSERT INTO likes(user_id, post_id)
          VALUES (?, ?);
         `, [userId, postId]);
@@ -133,7 +139,7 @@ app.post('/likes', async (req, res) => {
 app.put('/users/:userId', async (req, res) => {
     const {userId} = req.params
     const {name, email, profileImage, password} = req.body;
-    const users = await appDataSource.query(
+    await appDataSource.query(
         `UPDATE users
          SET name=?,
              email=?,
@@ -143,40 +149,42 @@ app.put('/users/:userId', async (req, res) => {
     );
     res.status(201).json({message: "user updated"})
 });
-app.put('/posts/:postId', async (req, res) => {
-    const postId = Number(req.params.postId)
-    const {title, content} = req.body;
-    const posts = await appDataSource.query(
+app.put('/users/:userId/post/:postId', async (req, res) => {
+    const {userId, postId} = req.params;
+    const {imageUrl, title, content} = req.body;
+    await appDataSource.query(
         `UPDATE posts
-         SET title=?,
+         SET image_url=?,
+             title=?,
              content=?
-         WHERE id = ?`, [title, content, postId]
+         WHERE user_id = ?
+           AND id = ?`, [imageUrl, title, content, userId, postId]
     );
     return res.status(201).json({message: "post updated"})
 });
 app.put('/users/:userId/likes', async (req, res) => {
     const {userId} = req.params
     const {postId} = req.body;
-    const likes = await appDataSource.query(
+    await appDataSource.query(
         `UPDATE likes
          SET post_id=?
-             WHERE id = ?`, [postId, userId]
+         WHERE user_id = ?`, [postId, userId]
     );
     res.status(201).json({message: "like updated"})
 });
 
 app.delete('/users/:userId', async (req, res) => {
     const userId = Number(req.params.userId);
-    const users = await appDataSource.query(
+    await appDataSource.query(
         `DELETE
          FROM users
          WHERE id = ?`, [userId]
     );
     res.status(204).json({message: "user deleted"})
 });
-app.delete('/posts/:postId', async (req, res) => {
+app.delete('/users/:userId/post/:postId', async (req, res) => {
     const postId = Number(req.params.postId);
-    const posts = await appDataSource.query(
+    await appDataSource.query(
         `DELETE
          FROM posts
          WHERE id = ?`, [postId]
@@ -185,7 +193,7 @@ app.delete('/posts/:postId', async (req, res) => {
 });
 app.delete('/users/:userId/likes', async (req, res) => {
     const {userId} = req.params;
-    const likes = await appDataSource.query(
+    await appDataSource.query(
         `DELETE
          FROM likes
          WHERE user_id = ?`, [userId]
@@ -196,9 +204,13 @@ app.delete('/users/:userId/likes', async (req, res) => {
 
 const PORT = process.env.PORT
 const startServer = () => {
-    app.listen(PORT, function () {
-        console.log(`Server listening on PORT ${PORT}`)
-    });
+    try {
+        app.listen(PORT, () => {
+            console.log(`Server listening on PORT ${PORT}`)
+        })
+    } catch (err) {
+        console.error(err);
+    }
 };
 
 startServer();
