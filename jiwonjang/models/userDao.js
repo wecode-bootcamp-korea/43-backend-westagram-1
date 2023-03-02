@@ -1,23 +1,4 @@
-const { DataSource } = require("typeorm");
-
-const appDataSource = new DataSource({
-  type: process.env.TYPEORM_CONNECTION,
-  host: process.env.TYPEORM_HOST,
-  port: process.env.TYPEORM_PORT,
-  username: process.env.TYPEORM_USERNAME,
-  password: process.env.TYPEORM_PASSWORD,
-  database: process.env.TYPEORM_DATABASE,
-});
-
-appDataSource
-  .initialize()
-  .then(() => {
-    console.log("Data Source has been initialized!");
-  })
-  .catch((err) => {
-    console.log("Error occurred during Data Source initialization", err);
-    appDataSource.destroy();
-  });
+const { appDataSource } = require("./appDataSource");
 
 const createUser = async (name, email, password, profileImage) => {
   try {
@@ -26,7 +7,7 @@ const createUser = async (name, email, password, profileImage) => {
         name,
         email,
         password,
-        profile_image,
+        profile_image
       )VALUES(?, ?, ?, ?);
       `,
       [name, email, password, profileImage]
@@ -38,6 +19,34 @@ const createUser = async (name, email, password, profileImage) => {
   }
 };
 
+const showUserPosts = async (userId) => {
+  try {
+    return await appDataSource.query(
+      `SELECT
+          users.id AS userId,
+          users.profile_image AS userProfileImage,
+          JSON_ARRAYAGG(
+            JSON_OBJECT(
+              "postingId", posts.id,
+              "postingImageUrl", posts.posts_img,
+              "postingContent", posts.content
+            )
+          )AS postings
+        FROM users
+        JOIN posts ON users.id = posts.user_id
+        WHERE users.id = ?
+        GROUP BY users.id
+      `,
+      [userId]
+    );
+  } catch (err) {
+    const error = new Error("INVALID_DATA_INPUT");
+    error.statusCode = 500;
+    throw error;
+  }
+};
+
 module.exports = {
   createUser,
+  showUserPosts,
 };

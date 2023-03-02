@@ -4,9 +4,9 @@ const postController = require("../controllers/postController");
 
 const router = express.Router();
 
-router.post("/posts", postController.createPost);
-router.patch("/posts", postController.changeModifyPost);
-router.delete("/posts/:postId", postController.changeDeletePost);
+router.post("", postController.createPost);
+router.patch("", postController.changeModifyPost);
+router.delete("/:postId", postController.changeDeletePost);
 
 module.exports = {
   router,

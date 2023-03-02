@@ -8,7 +8,7 @@ const createPost = async (req, res) => {
       return res.status(400).json({ message: "KEY_ERROR" });
     }
 
-    await userService.createPost(title, content, userId, postsImg);
+    await postService.createPost(title, content, userId, postsImg);
     return res.status(201).json({
       message: "POST_CREATED",
     });
@@ -25,10 +25,13 @@ const changeModifyPost = async (req, res) => {
     if (!postingId) {
       return res.status(400).json({ message: "KEY_ERROR" });
     }
-
-    await postService.changeModifyPost(postingId, postingTitle, postingContent);
+    const changeModifyPost = await postService.changeModifyPost(
+      postingId,
+      postingTitle,
+      postingContent
+    );
     return res.status(200).json({
-      data: result,
+      data: changeModifyPost,
     });
   } catch (err) {
     console.log(err);

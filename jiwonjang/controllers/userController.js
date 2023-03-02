@@ -4,7 +4,7 @@ const signUp = async (req, res) => {
   try {
     const { name, email, password, profileImage } = req.body;
 
-    if (!name || !email || !password || !profileImage) {
+    if (!name || !email || !password) {
       return res.status(400).json({ message: "KEY_ERROR" });
     }
 
@@ -18,17 +18,17 @@ const signUp = async (req, res) => {
   }
 };
 
-const createPost = async (req, res) => {
+const userPosts = async (req, res) => {
   try {
-    const { title, content, userId, postsImg } = req.body;
+    const { userId } = req.params;
 
-    if (!title || !userId || !postsImg) {
+    if (!userId) {
       return res.status(400).json({ message: "KEY_ERROR" });
     }
 
-    await userService.createPost(title, content, userId, postsImg);
-    return res.status(201).json({
-      message: "POST_CREATED",
+    await userService.userPosts(userId);
+    return res.status(200).json({
+      data: result,
     });
   } catch (err) {
     console.log(err);
@@ -38,4 +38,5 @@ const createPost = async (req, res) => {
 
 module.exports = {
   signUp,
+  userPosts,
 };

@@ -1,23 +1,4 @@
-const { DataSource } = require("typeorm");
-
-const appDataSource = new DataSource({
-  type: process.env.TYPEORM_CONNECTION,
-  host: process.env.TYPEORM_HOST,
-  port: process.env.TYPEORM_PORT,
-  username: process.env.TYPEORM_USERNAME,
-  password: process.env.TYPEORM_PASSWORD,
-  database: process.env.TYPEORM_DATABASE,
-});
-
-appDataSource
-  .initialize()
-  .then(() => {
-    console.log("Data Source has been initialized!");
-  })
-  .catch((err) => {
-    console.log("Error occurred during Data Source initialization", err);
-    appDataSource.destroy();
-  });
+const { appDataSource } = require("./appDataSource");
 
 const newPost = async (title, content, userId, postsImg) => {
   try {
@@ -26,7 +7,7 @@ const newPost = async (title, content, userId, postsImg) => {
         title,
         content,
         user_id,
-        posts_img,
+        posts_img
       )VALUES(?, ?, ?, ?);
       `,
       [title, content, userId, postsImg]
@@ -43,8 +24,8 @@ const modifyPost = async (postingId, postingTitle, postingContent) => {
     await appDataSource.query(
       `UPDATE posts
         SET
-        title = ?.
-        content =?
+        title = ?,
+        content = ?
       WHERE id = ?
       `,
       [postingTitle, postingContent, postingId]
@@ -62,6 +43,7 @@ const modifyPost = async (postingId, postingTitle, postingContent) => {
       `,
       [postingId]
     );
+    return result;
     //return result.status(200).json({ data: result });
   } catch (err) {
     const error = new Error("INVALID_DATA_INPUT");

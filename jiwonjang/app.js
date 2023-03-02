@@ -1,4 +1,4 @@
-require("dotenv").config();
+/*require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
@@ -37,7 +37,7 @@ const HOST = process.env.HOST;
 app.get("/ping", (req, res) => {
   return res.status(200).json({ message: "pong" });
 });
-//completed(no test)
+//completed(tested)
 app.post("/users/signup", async (req, res) => {
   const { name, email, profileImage, password } = req.body;
 
@@ -53,7 +53,7 @@ app.post("/users/signup", async (req, res) => {
   );
   res.status(201).json({ message: "userCreated" });
 });
-//completed(no test)
+//completed(tested)
 app.post("/posts", async (req, res) => {
   const { title, content, userId, postsImg } = req.body;
 
@@ -69,7 +69,7 @@ app.post("/posts", async (req, res) => {
   );
   res.status(201).json({ message: "postCreated" });
 });
-//completed(no test)
+//completed(tested)
 app.patch("/posts", async (req, res) => {
   const { postingId, postingTitle, postingContent } = req.body;
 
@@ -82,8 +82,9 @@ app.patch("/posts", async (req, res) => {
     `,
     [postingTitle, postingContent, postingId]
   );
-  const result = await appDataSource.query(
-    `SELECT 
+  const result /**여기 대괄호 붙으면 배열이 제거됨 */ /*=
+    await appDataSource.query(
+      `SELECT 
         users.id as userId,
         users.name as userName,
         posts.id as postingId,
@@ -93,11 +94,11 @@ app.patch("/posts", async (req, res) => {
       INNER JOIN users ON users.id = posts.user_id
       WHERE posts.id = ?
     `,
-    [postingId]
-  );
+      [postingId]
+    );
   return res.status(200).json({ data: result });
 });
-//completed(no test)
+//completed(tested)
 app.delete("/posts/:postId", async (req, res) => {
   const { postId } = req.params;
 
@@ -111,7 +112,7 @@ app.delete("/posts/:postId", async (req, res) => {
   );
   res.status(200).json({ message: "postingDeleted" });
 });
-//
+//complete(tested)
 app.get("/users-posts", async (req, res) => {
   await appDataSource.manager.query(
     `SELECT
@@ -127,7 +128,7 @@ app.get("/users-posts", async (req, res) => {
     }
   );
 });
-//
+//completed(no test)
 app.get("/users/:userId/posts", async (req, res) => {
   const { userId } = req.params;
 
@@ -173,6 +174,35 @@ const start = async () => {
     app.listen(PORT, HOST, () =>
       console.log(`🧨server is listening on ${PORT}🧨`)
     );
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+start();
+*/
+require("dotenv").config();
+const routes = require("./routes");
+
+const cors = require("cors");
+const morgan = require("morgan");
+const express = require("express");
+const app = express();
+
+app.use(cors());
+app.use(morgan("combined"));
+app.use(express.json());
+app.use(routes);
+
+app.get("/ping", (req, res) => {
+  res.json({ message: "pong" });
+});
+
+const PORT = process.env.PORT;
+
+const start = async () => {
+  try {
+    app.listen(PORT, () => console.log(`Server is listening on ${PORT}`));
   } catch (err) {
     console.error(err);
   }
