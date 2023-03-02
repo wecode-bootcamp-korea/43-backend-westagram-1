@@ -18,20 +18,20 @@ const createPost = async (req, res) => {
   }
 };
 
-const changeModifyPost = async (req, res) => {
+const modifyPost = async (req, res) => {
   try {
     const { postingId, postingTitle, postingContent } = req.body;
 
     if (!postingId) {
       return res.status(400).json({ message: "KEY_ERROR" });
     }
-    const changeModifyPost = await postService.changeModifyPost(
+    const modifyPost = await postService.modifyPost(
       postingId,
       postingTitle,
       postingContent
     );
     return res.status(200).json({
-      data: changeModifyPost,
+      data: modifyPost,
     });
   } catch (err) {
     console.log(err);
@@ -39,7 +39,7 @@ const changeModifyPost = async (req, res) => {
   }
 };
 
-const changeDeletePost = async (req, res) => {
+const deletePost = async (req, res) => {
   try {
     const { postId } = req.params;
 
@@ -47,7 +47,7 @@ const changeDeletePost = async (req, res) => {
       return res.status(400).json({ message: "KEY_ERROR" });
     }
 
-    await postService.changeDeletePost(postId);
+    await postService.deletePost(postId);
     return res.status(200).json({
       message: "POST_DELETED",
     });
@@ -59,6 +59,6 @@ const changeDeletePost = async (req, res) => {
 
 module.exports = {
   createPost,
-  changeModifyPost,
-  changeDeletePost,
+  modifyPost,
+  deletePost,
 };

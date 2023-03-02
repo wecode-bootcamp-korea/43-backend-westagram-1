@@ -5,7 +5,7 @@ const createPost = async (title, content, userId, postsImg) => {
   return newPost;
 };
 
-const changeModifyPost = async (postingId, postingTitle, postingContent) => {
+const modifyPost = async (postingId, postingTitle, postingContent) => {
   const modifyPost = await postDao.modifyPost(
     postingId,
     postingTitle,
@@ -14,13 +14,13 @@ const changeModifyPost = async (postingId, postingTitle, postingContent) => {
   return modifyPost;
 };
 
-const changeDeletePost = async (postId) => {
+const deletePost = async (postId) => {
   const deletePost = await postDao.deletePost(postId);
   return deletePost;
 };
 
 module.exports = {
   createPost,
-  changeModifyPost,
-  changeDeletePost,
+  modifyPost,
+  deletePost,
 };

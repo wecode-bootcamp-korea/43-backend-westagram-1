@@ -4,6 +4,15 @@ const signUp = async (req, res) => {
   try {
     const { name, email, password, profileImage } = req.body;
 
+    const pwValidation = new RegExp(
+      "^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,20})"
+    );
+    if (!pwValidation.test(password)) {
+      const err = new Error("PASSWORD_IS_NOT_VALID");
+      err.statusCode = 409;
+      throw err;
+    }
+
     if (!name || !email || !password) {
       return res.status(400).json({ message: "KEY_ERROR" });
     }
